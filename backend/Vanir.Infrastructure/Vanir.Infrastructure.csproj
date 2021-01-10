@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Vanir.Application\Vanir.Application.csproj" />
     <ProjectReference Include="..\Vanir.Domain\Vanir.Domain.csproj" />
+    <ProjectReference Include="..\Vanir.Utilities\Vanir.Utilities.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

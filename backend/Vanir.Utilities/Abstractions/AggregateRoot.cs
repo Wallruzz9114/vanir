@@ -1,11 +1,19 @@
 using System.Collections.Generic;
+using static System.Runtime.Serialization.FormatterServices;
 
 namespace Vanir.Utilities.Abstractions
 {
     public abstract class AggregateRoot
     {
-        public List<object> _events = new();
-        public IReadOnlyList<object> DomainEvents => _events.AsReadOnly();
+        internal List<object> _events = new();
+        public IReadOnlyCollection<object> DomainEvents => _events.AsReadOnly();
+
+        public AggregateRoot(IEnumerable<object> events)
+        {
+            foreach (var @event in events) { When(@event); }
+        }
+
+        protected AggregateRoot() { }
 
         public void RaiseDomainEvent(object @event)
         {
@@ -13,16 +21,19 @@ namespace Vanir.Utilities.Abstractions
             _events.Add(@event);
         }
 
-        public void ClearChange() => _events.Clear();
+        public void ClearChanges() => _events?.Clear();
 
         public void Apply(object @event)
         {
             When(@event);
-            EnsureValidateState();
+            EnsureValidState();
             RaiseDomainEvent(@event);
         }
 
         protected abstract void When(dynamic @event);
-        protected abstract void EnsureValidateState();
+        protected abstract void EnsureValidState();
+
+        public static TAggregateRoot Create<TAggregateRoot>()
+            => (TAggregateRoot)GetUninitializedObject(typeof(TAggregateRoot));
     }
 }
